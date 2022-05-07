@@ -14,12 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    // Redis::set('world', 'hello');
-    // return Redis::get('world');
 
-    return view('welcome');
-});
 
 
 Route::get('/article/{id}', function ($id) {
@@ -84,6 +79,43 @@ Route::get('/trending', function () {
 // 3) "php"
 // 4) "3"
 // [END] =========== Implementasi Sorted Sets Di Laravel =================
+
+// =========== Tipe Hashes =================
+// 127.0.0.1:6379> hmset user.1.stat bookmark 10 watched 50 lessons 15
+// OK
+// 127.0.0.1:6379> hget user.1.stat bookmark
+// "10"
+// 127.0.0.1:6379> hget user.1.stat lessons
+// "15"
+// 127.0.0.1:6379> hgetall user.1.stat
+// 1) "bookmark"
+// 2) "10"
+// 3) "watched"
+// 4) "50"
+// 5) "lessons"
+// 6) "15"
+
+// untuk menghapus data
+// 127.0.0.1:6379>flushall
+
+Route::get('/', function () {
+    $user2stat = [
+        'bookmark'  =>  12,
+        'watched'  =>  23,
+        'lessons'  =>  34
+    ];
+
+    Redis::hmset('user.2.stat', $user2stat);
+    return $user2stat;
+});
+
+
+Route::get('/user/{id}/stat', function ($id) {
+    $stat = Redis::hgetall("user.{$id}.stat");
+    return $stat;
+});
+
+// [END] =========== Tipe Hashes =================
 
 
 // more command in https://redis.io/commands/
